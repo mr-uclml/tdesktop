@@ -428,24 +428,7 @@ void PeerData::setUserpicPhoto(const MTPPhoto &data) {
 }
 
 QImage *PeerData::userpicCloudImage(Ui::PeerUserpicView &view) const {
-	if (!_userpic.isCurrentView(view.cloud)) {
-		if (!_userpic.empty()) {
-			view.cloud = _userpic.createView();
-			_userpic.load(&session(), userpicOrigin());
-		} else {
-			view.cloud = nullptr;
-		}
-		view.cached = QImage();
-	}
-	if (const auto image = view.cloud.get(); image && !image->isNull()) {
-		_userpicEmpty = nullptr;
-		return image;
-	} else if (isNotificationsUser()) {
-		static auto result = Window::LogoNoMargin().scaledToWidth(
-			kUserpicSize,
-			Qt::SmoothTransformation);
-		return &result;
-	}
+	// DISABLED: Always return nullptr to prevent loading cloud images
 	return nullptr;
 }
 
@@ -480,11 +463,13 @@ void PeerData::paintUserpic(
 }
 
 void PeerData::loadUserpic() {
-	_userpic.load(&session(), userpicOrigin());
+	// DISABLED: Don't load userpic from server
+	// _userpic.load(&session(), userpicOrigin());
 }
 
 bool PeerData::hasUserpic() const {
-	return !_userpic.empty();
+	// DISABLED: Always return false
+	return false;
 }
 
 Ui::PeerUserpicView PeerData::activeUserpicView() {
@@ -592,23 +577,12 @@ void PeerData::updateUserpic(
 		PhotoId photoId,
 		MTP::DcId dcId,
 		bool hasVideo) {
-	setUserpicChecked(
-		photoId,
-		ImageLocation(
-			{ StorageFileLocation(
-				dcId,
-				isSelf() ? peerToUser(id) : UserId(),
-				MTP_inputPeerPhotoFileLocation(
-					MTP_flags(0),
-					input(),
-					MTP_long(photoId))) },
-			kUserpicSize,
-			kUserpicSize),
-		hasVideo);
+	// DISABLED: Don't update userpic
+	// setUserpicChecked(...);
 }
-
 void PeerData::clearUserpic() {
-	setUserpicChecked(PhotoId(), ImageLocation(), false);
+	// DISABLED: Don't clear userpic
+	// setUserpicChecked(PhotoId(), ImageLocation(), false);
 }
 
 void PeerData::setUserpicChecked(
